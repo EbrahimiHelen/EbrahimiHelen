@@ -1,0 +1,33 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+
+int main() {
+    // Input lists
+    std::vector<int> left = {3, 4, 2, 1, 3, 3};
+    std::vector<int> right = {4, 3, 5, 3, 9, 3};
+
+    // Sort both lists in ascending order
+    std::sort(left.begin(), left.end());
+    std::sort(right.begin(), right.end());
+
+    // Ensure lists are the same size
+    if (left.size() != right.size()) {
+        std::cerr << "Error: Lists must have the same size!" << std::endl;
+        return 1;
+    }
+
+    // Calculate the total distance
+    int total_distance = 0;
+    for (size_t i = 0; i < left.size(); ++i) {
+        int diff = std::abs(left[i] - right[i]);
+        total_distance += diff;
+        std::cout << "Pair: (" << left[i] << ", " << right[i] << "), Distance: " << diff << std::endl;
+    }
+
+    // Output the final result
+    std::cout << "Total distance: " << total_distance << std::endl;
+
+    return 0;
+}
