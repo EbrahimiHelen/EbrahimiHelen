@@ -4,61 +4,59 @@
 #include <vector>
 #include <sstream>
 #include <cstdbool>
+#include <limits>
+#include <cstdlib>  // För std::abs
+#include <cstring>  // För strtok och strcpy
 using namespace std;
 
-bool diff_valid(std::vector<int> report, size_t index){
-	int diff = abs(report[index] - report[index-1]);
-	return diff >=1 && diff <= 3;
-	
-}
-bool increasing_valid(std::vector<int> report){
-	for(size_t i=1; i<report.size(); i++){
-		if(report[i] <= report[i-1]){
-			return false;
-		}
-		if (!diff_valid(report, i)){
-			return false;
-		}		
-	}
-	return true;
-}
+// Funktion som kontrollerar om en rapport är säker
+bool isSafeReport(const std::vector<int>& levels) {
+    if (levels.size() < 2) return true;  // En enda nivå är alltid säker
 
-bool decreasing_valid(std::vector<int> report){
-	for(size_t i=1; i<report.size(); i++){
-		if(report[i] >= report[i-1]){
-			return false;
-		}
-		if (!diff_valid(report, i)){
-			return false;
-		}		
-	}
-	return true;
+    bool increasing = (levels[1] > levels[0]);
+    
+    for (size_t i = 1; i < levels.size(); ++i) {
+        int diff = std::abs(levels[i] - levels[i - 1]);
+        
+        // Om skillnaden inte är mellan 1 och 3 ? osäker rapport
+        if (diff < 1 || diff > 3) return false;
+
+        // Kolla om sekvensen byter trend (går från ökande till minskande)
+        if ((levels[i] > levels[i - 1]) != increasing) return false;
+    }
+    return true;
 }
-bool safeReport(std::vector<int> report){
-	increasing_valid(report) || decreasing_valid(report);
-} 
 
 int main() {
-    // �ppna indatafilen
-    std::ifstream file("input2.txt");
+    std::ifstream inputFile("AOC2.txt");
+    if (!inputFile) {
+        std::cerr << "Error: Could not open AOC2.txt" << std::endl;
+        return 1;
+    }
+
     std::string line;
-    std::vector<int> report;
-    int safeCount = 0;
+    int safeReports = 0;
 
-    // L�s in data fr�n filen
-    while (getline(file, line)) {
-        stringstream ss(line);
-        int level;
-        while (ss >> level){
-        	report.push_back(level);
-		}
-		if (safeReport(report)){
-			safeCount++;
-		}
-		report.clear();
-	}
-    // St�ng filen
-    cout << safeCount;
-    file.close();
+    // Läs varje rad i filen
+    while (std::getline(inputFile, line)) {
+        std::vector<int> levels;
+        char buffer[256];
+        strcpy(buffer, line.c_str());  // Konvertera std::string till C-sträng
+
+        // Dela upp raden i nummer (skilda med mellanslag)
+        char* token = strtok(buffer, " ");
+        while (token != nullptr) {
+            levels.push_back(std::atoi(token));
+            token = strtok(nullptr, " ");
+        }
+
+        // Kontrollera om rapporten är säker
+        if (isSafeReport(levels)) {
+            safeReports++;
+        }
+    }
+    
+    inputFile.close();
+    std::cout << "Number of safe reports: " << safeReports << std::endl;
+    return 0;
 }
-
