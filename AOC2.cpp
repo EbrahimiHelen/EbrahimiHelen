@@ -5,8 +5,8 @@
 #include <sstream>
 #include <cstdbool>
 #include <limits>
-#include <cstdlib>  // För std::abs
-#include <cstring>  // För strtok och strcpy
+#include <cstdlib>  
+#include <cstring>  
 using namespace std;
 
 // Funktion som kontrollerar om en rapport är säker
